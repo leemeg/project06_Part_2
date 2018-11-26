@@ -12,7 +12,7 @@ const EMP_ID = 0,  LAST_NAME = 2,FIRST_NAME = 1, ADDRESS = 3, HOURLY_RATE = 4, C
 
 
 let continueResponse;
-let client, action;
+let action;
 let employees = [], customers = [], weeklyTrans = [];
 
 
@@ -21,7 +21,8 @@ function main(){
     loadCustomers();
     transGenerator();/*Creates the weekly data for where and how much employees work, only for demonstration, would not be in real prg.
     If real prog, transGenerator would be replaced with menu functions to add/remove clients & employees. Would also have ability to
-    save employee & customer data. Sense updating the master file wasn't a requirement I decided to simplify things*/
+    save employee & customer data. Sense updating the master file wasn't a requirement I decided to simplify things even though this
+    function resembles a plate of spaghetti*/
     sortTransOrder();
     calculateHours();
     if (continueResponse !== 0 && continueResponse !== 1) {
@@ -50,12 +51,12 @@ function chooseAction() {
     action = -1;
     while (action !== 1 && action !== 2 && action !== 3 && action !== 4){
         action = Number(PROMPT.question(
-            `\nWhat would you like to do?
-            \t1) View all transactions
-            \t2) View all employees weekly job report
-            \t3) View only employees who have worked this week
-            \t4) Quit
-            \tPlease enter value: `));
+            `\n\tWhat would you like to do?
+            1) View all transactions
+            2) View all employees weekly job report
+            3) View only employees who have worked this week
+            4) Quit & End week
+            Please enter value: `));
     }
 }
 
@@ -64,17 +65,19 @@ function listAllTrans() {
     console.log(`Employee #\tJob #\tHours worked\tHourly rate\tGross pay\n==========      =====   ============    ===========     =========`);
     for (let i = 0; i < weeklyTrans.length; i++) {
         let paid = weeklyTrans[i][HOURS] * weeklyTrans[i][HOURLY_RATE];
-        process.stdout.write(`${i}) ${weeklyTrans[i][EMP_ID]} \t\t${weeklyTrans[i][LAST_NAME]}\t  ${weeklyTrans[i][HOURS]}\t\t${weeklyTrans[i][HOURLY_RATE]} \t\t${paid}\n`);
+        process.stdout.write(` ${i + 1}) ${weeklyTrans[i][EMP_ID]}\t${weeklyTrans[i][LAST_NAME]}\t  ${weeklyTrans[i][HOURS]}\t\t${weeklyTrans[i][HOURLY_RATE]} \t\t${paid}\n`);
     }
 }
 
 function buildWorkingReport() {
     console.log(`\x1Bc`);
     console.log(`Employee #\tHours worked\tHourly rate\tGross pay\n==========      ============    ===========     =========`);
+    let num = 0;
     for (let i = 0; i < employees.length; i++) {
         if (employees[i][HOURS] !== 0) {
             let paid = employees[i][HOURS] * employees[i][HOURLY_RATE];
-            process.stdout.write(` ${employees[i][EMP_ID]}   \t${employees[i][HOURS]}\t\t${employees[i][HOURLY_RATE]} \t\t${paid}\n`);
+            process.stdout.write(` ${num + 1}) ${employees[i][EMP_ID]}   \t  ${employees[i][HOURS]}\t\t${employees[i][HOURLY_RATE]} \t\t${paid}\n`);
+            num++;
         }
     }
 }
@@ -91,7 +94,8 @@ function calculateHours() {
         if (employees[j][EMP_ID] === weeklyTrans[i][EMP_ID]){
             employees[j][HOURS] = employees[j][HOURS] + weeklyTrans[i][HOURS]
         }else {
-            j++, i--;
+            j++;
+            i--;
         }
     }
 }
@@ -101,7 +105,7 @@ function buildFullReport() {
     console.log(`Employee #\tHours worked\tHourly rate\tGross pay\n==========      ============    ===========     =========`);
     for (let i = 0; i < employees.length; i++) {
         let paid = employees[i][HOURS] * employees[i][HOURLY_RATE];
-        process.stdout.write(` ${employees[i][EMP_ID]}   \t${employees[i][HOURS]}\t\t${employees[i][HOURLY_RATE]} \t\t${paid}\n`);
+        process.stdout.write(` ${i + 1}) ${employees[i][EMP_ID]}   \t  ${employees[i][HOURS]}\t\t${employees[i][HOURLY_RATE]} \t\t${paid}\n`);
     }
 }
 
@@ -159,9 +163,9 @@ function setContinueResponse() {
 }
 
 function transGenerator() {//only for demonstration
-    const MAX_TRANS =7;
+    const MAX_TRANS = 7;
     let checked = [];
-    for (let a = 0; a < employees.length; a++){
+    for (let a = 0; a < employees.length; a++){//for loop creates MD array for tempEmp
         checked[a] = [];
     }
     let hours, tempCust, tempEmp;
